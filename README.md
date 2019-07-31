@@ -15,84 +15,33 @@ The Hotel App originally had no relevant information appear after searching for 
 
 
     def hotelSearch(request, IATA):
-        form = SearchForm(initial = "")
-       //Initialize Amadeus
-        amadeus = Client(
-            client_id = "oXoHcPGNhQAKNcvvhFIkB9kFudwrBYTy",
-            client_secret = "zs3PhgM4HNpZbCm4"
-        )
-        response = amadeus.shopping.hotel_offers.get(cityCode = IATA)
-        with open("log.json", "w+", encoding="utf-8") as log:
-            json.dump(response.data, log, indent=2)
-        result = response.data
-        print (result)
-        context = {'form' : form, 'results' : result}
-        return render(request, "HotelApp/index.html", context)
+    amadeus = Client(
+        client_id = "oXoHcPGNhQAKNcvvhFIkB9kFudwrBYTy",
+        client_secret = "zs3PhgM4HNpZbCm4"
+    )
+    response = amadeus.shopping.hotel_offers.get(cityCode = IATA)
+    with open("log.json", "w+", encoding="utf-8") as log:
+        json.dump(response.data, log, indent=2)
+    result = response.data
+    print(result[1]['hotel']['name'])
+    print(result[1]['hotel']['address']['lines'][0])
+    print(result[1]['offers'][0]['price']['base'])
+    # print(result[1]['type']['rating'][0])
 
-    def hotelPrice(request, IATA):
-        price = PriceForm(initial = "")
-       //Initialize Amadeus
-        amadeus = Client(
-            client_id = "oXoHcPGNhQAKNcvvhFIkB9kFudwrBYTy",
-            client_secret = "zs3PhgM4HNpZbCm4"
-        )
-        response = amadeus.shopping.hotel_offers.get(price = IATA)
-        with open("log.json", "w+", encoding="utf-8") as log:
-            json.dump(response.data, log, indent=2)
-        result = response.data
-        print (result)
-        // context = {'form' : price, 'results' : result}
-        price = PriceForm['price']
-        return render(request, 'HotelApp/index.html', {'price' : PriceForm, 'results' : result})#, PriceForm)  
-
-
-    def hotelName(request, IATA):
-        form = SearchForm(initial = "")
-       //Initialize Amadeus
-        amadeus = Client(
-            client_id = "oXoHcPGNhQAKNcvvhFIkB9kFudwrBYTy",
-            client_secret = "zs3PhgM4HNpZbCm4"
-        )
-        response = amadeus.shopping.hotel_offers.get(name = IATA)
-        with open("log.json", "w+", encoding="utf-8") as log:
-            json.dump(response.data, log, indent=2)
-        result = response.data
-        print (result)
-        context = {'form' : form, 'results' : result}
-        return render(request, "HotelApp/index.html", context)
-
-    def hotelReview(request, IATA):
-        form = SearchForm(initial = "")
-       //Initialize Amadeus
-        amadeus = Client(
-            client_id = "oXoHcPGNhQAKNcvvhFIkB9kFudwrBYTy",
-            client_secret = "zs3PhgM4HNpZbCm4"
-        )
-        response = amadeus.shopping.hotel_offers.get(rating = IATA)
-        with open("log.json", "w+", encoding="utf-8") as log:
-            json.dump(response.data, log, indent=2)
-        result = response.data
-        print (result)
-        context = {'form' : form, 'results' : result}
-        return render(request, "HotelApp/index.html", context)
-    
-    
-       def hotelIndex(request):
-        //Creates blank form on initial page load
-        if request.method == 'GET':
+    context = {
+        'name' : result[1]['hotel']['name'],
+        'address' : result[1]['hotel']['address']['lines'][0],
+        'price' : result[1]['offers'][0]['price']['base']
+        # 'price' : result[1]['offers'][0]['price']['base']
+        # 'hotel' : result[1]['type']['rating'][0]
+    }
+    return context
+    def hotelIndex(request):       
+        if request.method =='POST':
+            desResult = request.POST.get('destinationvalue')
+            result = hotelSearch(request, desResult)     
+            context = result
         
-        form = SearchForm(initial = "")
-        context = {'form' : form}
-        return render(request, "HotelApp/index.html", context)
-            
-    elif request.method =='POST':
-        
-        form = SearchForm(request.POST)
-        // form.save()
-        global search
-        global cities
-        
-        search = "search.objects.filter().order_by('-id')[0]"
-        cities = "findMatches(search.destination)"
-        context = {'cities' : cities, 'form': form}
-        return render(request, "HotelApp/index.html", context)
+        return render(request, "HotelApp/index.html", {'context' : context})
+    else:
+        return render(request, "HotelApp/index.html")
