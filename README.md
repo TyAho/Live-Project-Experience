@@ -45,7 +45,7 @@ The Hotel App originally had no relevant information appear after searching for 
         return render(request, "HotelApp/index.html", {'context' : context})
     else:
         return render(request, "HotelApp/index.html")
-#URLS Section 
+# URLS Section 
 
 
     from django.urls import path
@@ -58,7 +58,7 @@ The Hotel App originally had no relevant information appear after searching for 
 
     ]
     
-#Models Section
+# Models Section
 
 
     class Search(models.Model):
@@ -78,7 +78,7 @@ The Hotel App originally had no relevant information appear after searching for 
         price = models.CharField(max_length = 50)
         
         
-#Forms Section
+# Forms Section
               
 
     class SearchForm(forms.Form):
