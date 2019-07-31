@@ -45,3 +45,62 @@ The Hotel App originally had no relevant information appear after searching for 
         return render(request, "HotelApp/index.html", {'context' : context})
     else:
         return render(request, "HotelApp/index.html")
+#URLS Section 
+
+
+    from django.urls import path
+    from . import views
+    from django.views.generic.base import TemplateView
+
+    urlpatterns = [
+        path('', views.hotelIndex, name="Hotels")
+
+
+    ]
+    
+#Models Section
+
+
+    class Search(models.Model):
+        destination = models.CharField(max_length = 50)
+
+    class HotelApp_search(models.Model):
+        destination = models.CharField(max_length = 50)
+    #added display items
+
+    class Reviews(models.Model):
+        reviews = models.CharField(max_length = 50)
+
+    class HotelName(models.Model):
+        name = models.CharField(max_length = 50)
+
+    class Price(models.Model):
+        price = models.CharField(max_length = 50)
+        
+        
+#Forms Section
+              
+
+    class SearchForm(forms.Form):
+        # class Meta:
+            search = forms.CharField(label='Enter Your Destination', max_length=60, required=True)
+
+            def clean(self):
+                clean_form = self.cleaned_data
+                return clean_form
+
+                model = self.search
+                fields = ['destination'] 
+                labels = {
+                    'destination' : 'Your Destination',
+                }
+
+    class PriceForm(forms.Form):
+        price = forms.CharField(label='', max_length=60, required=True)
+
+        def clean(self):
+                clean_form = self.cleaned_data
+                return clean_form
+                
+                
+                
