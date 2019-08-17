@@ -101,6 +101,21 @@ The Hotel App originally had no relevant information appear after searching for 
         def clean(self):
                 clean_form = self.cleaned_data
                 return clean_form
-                
-                
+        
+# Job Management Story
+# Adding Preloader 
+
+
+# Creating seperate button for the preloader functionality
+    break;
+    case ButtonType.Save:
+        <a type="button" class="btn-sm btn-primary" href="@Url.Action(Model.Action, new { id = Model.RouteId})">
+            <span><i class="fa fa-pencil"></i> Submit </span>
+        </a>
+        break;
+        
+        
+      case ButtonType.Save:
+          result.Buttons.Add(new AnchorButtonVM() { ButtonType = ButtonType.Save, Action = "Save",                           RouteId = routeId });
+          break;
                 
