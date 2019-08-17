@@ -106,6 +106,63 @@ The Hotel App originally had no relevant information appear after searching for 
 # Adding Preloader 
 
 
+# Creating the preloader with Controller and View 
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Web;
+    using System.Web.Mvc;
+
+    namespace ManagementPortal.Controllers
+    {
+        public class PreLoaderController : ApplicationBaseController
+        {
+            // GET: PreLoader
+            public ActionResult Save()
+            {
+                return View();
+            }
+        }
+    }
+    
+    
+    
+        @{
+        ViewBag.Title = "Save";
+    }
+
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <h2>Welcome To Ajax Loader</h2>
+    <div id="divLoader" style="display:none;">
+        <img src="~/Content/ajax-loader.gif" alt="Loader" />
+    </div>
+    <input type="submit" id="btnSubmit" value="Submit" />
+    <script>
+        $("#btnSubmit").click(function () {
+            $("#divLoader").show();
+            $.ajax({
+                url: '/Test/Submit',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                //async: true,
+                //processData: false,
+                // cache: false,
+                success: function (data) {
+                    $("#divLoader").hide();
+                    alert(data);
+                },
+                error: function (xhr) {
+                    $("#divLoader").hide();
+                    alert('error');
+                }
+            })
+        });
+    </script>
+    
+
+
 # Creating seperate button for the preloader functionality
     break;
     case ButtonType.Save:
@@ -118,4 +175,9 @@ The Hotel App originally had no relevant information appear after searching for 
       case ButtonType.Save:
           result.Buttons.Add(new AnchorButtonVM() { ButtonType = ButtonType.Save, Action = "Save",                           RouteId = routeId });
           break;
-                
+# Fixing Home button on navbar of Job management site
+The other assignment I was tasked with was to figure out why the home button on the navbar was not correctly transferring the users. I was able to fix this by changing the href to the correct corresponding URL.
+    <div class="card text-light bg-secondary py-3 px-2">
+                        <h5 class="card-title">Looking for our main website?</h5>
+                        <input type="button" class="home_btn" onclick="location.href='@Url.Action("Dashboard",         "Home")'" value="Take a look">
+                    </div>
