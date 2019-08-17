@@ -177,7 +177,8 @@ The Hotel App originally had no relevant information appear after searching for 
           break;
 # Fixing Home button on navbar of Job management site
 The other assignment I was tasked with was to figure out why the home button on the navbar was not correctly transferring the users. I was able to fix this by changing the href to the correct corresponding URL.
+    
     <div class="card text-light bg-secondary py-3 px-2">
                         <h5 class="card-title">Looking for our main website?</h5>
-                        <input type="button" class="home_btn" onclick="location.href='@Url.Action("Dashboard",         "Home")'" value="Take a look">
+                        <input type="button" class="home_btn" onclick="location.href='@Url.Action("Dashboard", "Home")'" value="Take a look">
                     </div>
