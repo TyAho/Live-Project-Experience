@@ -104,7 +104,7 @@ The Hotel App originally had no relevant information appear after searching for 
         
 # Job Management Story
 # Adding Preloader 
-For my project on C# I was tasked with the creation of a preloader for each create and edit view, so that the user would know there was a response to their input. In making this preloader I had to create a controller and view for the preloader itself and than I followed this up by creating a serperate button in the common data folder in refernce to this preloader, so that the create and edit views could easily use the button. Below is the code I made for this assignment.  
+For my project on C# I was tasked with the creation of a preloader for each create and edit view, so that the user would know there was a response to their input. In making this preloader I had to create a controller and view for the preloader itself and than I followed this up by creating a serperate button in the common data folder in reference to this preloader, so that the create and edit views could easily use the button. Below is the code I made for this assignment.  
 
 # Creating the preloader with Controller and View 
     using System;
