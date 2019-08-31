@@ -182,3 +182,56 @@ The other assignment I was tasked with was to figure out why the home button on 
                         <h5 class="card-title">Looking for our main website?</h5>
                         <input type="button" class="home_btn" onclick="location.href='@Url.Action("Dashboard", "Home")'" value="Take a look">
                     </div>
+# Front End for Job Management Story
+In the front end portion of the live project I was assigned with the job of fixing the Company News dashboard layout, as when too many news story items were added, the cards shapes would transform so that they were not all equal in size. In addition the cards were very narrow and it was hard to read exactly what was on them, so I needed to widen them as well. The other assignment I worked on was to fix the Company News Index, as this was also poorly laid out, since the button group did not line up horizontally and each new news item took up a lot more space than was needed. 
+
+# Fixing the Company News Dashboard Layout 
+    /****Company News Cards****/
+    #news-header {
+        background-color: rgb(117, 137, 138);
+
+    }
+
+    #new-body {
+        background-color: rgb(219, 228, 227);
+        padding: 15px 0px 0px 80px;
+
+
+    }
+        #new-body .card {
+            box-shadow: 5px 7px var(--dark-grey);
+            padding: 15px 20px 40px 10px;
+
+
+            width: 330px;
+
+        }
+    .col {
+
+        flex-grow: 0;
+        max-width: 100%;
+
+    }
+    
+# Fixing the Company News Index 
+/****Styling for Company News/Jobs Index****/
+
+    .IndexBody {
+        background-color: rgba(255, 255, 255,0.8);
+    }
+
+    #news-body {
+        background-color: rgba(255, 255, 255,0.8);
+        margin-right: -200px;
+        margin-left: -233px;    
+    }
+
+
+
+    .no-gutters {
+        padding: 0px -1px 40px 225px;
+        margin-left: 0px;
+        margin-right: 50px;
+        box-sizing: content-box;
+        padding: 20px;
+    }
