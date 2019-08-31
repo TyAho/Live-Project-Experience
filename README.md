@@ -183,7 +183,7 @@ The other assignment I was tasked with was to figure out why the home button on 
                         <input type="button" class="home_btn" onclick="location.href='@Url.Action("Dashboard", "Home")'" value="Take a look">
                     </div>
 # Front End for Job Management Story
-In the front end portion of the live project I was assigned with the job of fixing the Company News dashboard layout, as when too many news story items were added, the cards shapes would transform so that they were not all equal in size. In addition the cards were very narrow and it was hard to read exactly what was on them, so I needed to widen them as well. The other assignment I worked on was to fix the Company News Index, as this was also poorly laid out, since the button group did not line up horizontally and each new news item took up a lot more space than was needed. 
+In the front end portion of the live project I was assigned with the job of fixing the Company News dashboard layout, as when too many news story items were added, the cards shapes would transform so that they were not all equal in size. In addition, the cards were very narrow and it was hard to read exactly what was on them, so I needed to widen them as well. The other assignment I worked on was to fix the Company News Index, as this was also poorly laid out, since the button group did not line up horizontally and each new news item took up a lot more space than was needed. 
 
 # Fixing the Company News Dashboard Layout 
     /****Company News Cards****/
@@ -214,7 +214,7 @@ In the front end portion of the live project I was assigned with the job of fixi
     }
     
 # Fixing the Company News Index 
-/****Styling for Company News/Jobs Index****/
+    /****Styling for Company News/Jobs Index****/
 
     .IndexBody {
         background-color: rgba(255, 255, 255,0.8);
