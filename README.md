@@ -551,3 +551,101 @@ I added the public virtual PersonalProfile Profile { get; set; } line of code in
             // End DbSets       
             
             
+# Adding additional sorting, filtering and paging functionality to the jobsite page
+
+
+Adding to the jobsite controller, so that user could sort each item.
+
+     public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+            {
+                ViewBag.CurrentSort = sortOrder;
+                ViewBag.SiteSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+                ViewBag.AddressSortParm = sortOrder == "Date" ? "address_desc" : "Date";
+                ViewBag.TownSortParm = string.IsNullOrEmpty(sortOrder) ? "town_desc" : "";
+                ViewBag.StateSortParm = string.IsNullOrEmpty(sortOrder) ? "state_desc" : "";
+                ViewBag.ZipSortParm = string.IsNullOrEmpty(sortOrder) ? "zip_desc" : "";
+
+                if (searchString != null)
+                {
+                    page = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+
+                }
+
+                ViewBag.CurrentFilter = searchString;
+
+                var JobSites = from s in db.JobSites
+                               select s;
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    JobSites = JobSites.Where(s => s.SiteName.Contains(searchString)
+                                            || s.Address.Contains(searchString));
+                }
+
+                switch (sortOrder)
+                {
+                    case "name_desc":
+                        JobSites = JobSites.OrderByDescending(s => s.SiteName);
+                        break;
+                    case "address_desc":
+                        JobSites = JobSites.OrderByDescending(s => s.Address);
+                        break;
+                    case "town_desc":
+                        JobSites = JobSites.OrderByDescending(s => s.Town);
+                        break;
+
+                    case "state_desc":
+                        JobSites = JobSites.OrderByDescending(s => s.State);
+                        break;
+
+                    case "zip_desc":
+                        JobSites = JobSites.OrderByDescending(s => s.Zip);
+                        break;
+
+                    default:
+                        JobSites = JobSites.OrderBy(s => s.SiteName);
+                        break;
+
+                }
+                int pageSize = 3;
+                int pageNumber = (page ?? 1);
+                return View(JobSites.ToPagedList(pageNumber, pageSize));
+            }
+        
+ Adding to the index view to connect to the controller 
+
+    <table class="table">
+            <tr>
+                <th>
+                    @Html.ActionLink("Job Title", "Index", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Job Type", "Index", new { sortOrder = ViewBag.TypeSortParm, currentFilter = ViewBag.CurrentFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Location", "")
+                </th>
+                <th>
+                    @Html.ActionLink("Notes", "")
+                </th>
+                <th>
+                    @Html.ActionLink("Active", "Index", new { sortOrder = ViewBag.ActiveSortParm })
+                </th>
+                <th>
+                    Manager
+                </th>
+                <th>
+                    Weekly Shifts
+                </th>
+                <th></th>
+            </tr>
+# adding paging functionality to the view
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+        @Html.PagedListPager(Model, page => Url.Action("Index",
+            new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
