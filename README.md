@@ -235,3 +235,319 @@ In the front end portion of the live project I was assigned with the job of fixi
         box-sizing: content-box;
         padding: 20px;
     }
+# Back End for Job Management Story
+In the back end portion of the live project I was was assigned with the job of creating a personal profile page, by connecting each user id to the database from a one to one relationship, for the user to add additional information about themselves. In addition I was also tasked with adding additional sorting, filtering and paging functionality to the jobsite page, so that the view would be easier to work with and allowed the page itself to be scalable as the data being transferred into it grew. 
+
+
+# Adding personal profile and functionality
+# Adding model
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+    using System.Web;
+
+    namespace ManagementPortal.Models
+    {
+        public class PersonalProfile
+        {
+
+            [Key]
+            [ForeignKey("Person")]
+            public string ProfileID { get; set; }
+
+            [Required]
+            [MaxLength(100)]
+            [StringLength(100, MinimumLength = 1, ErrorMessage = "About Me must be between 1 and 100 characters")]
+            [Display(Name = "AboutMe")]
+            public string AboutMe { get; set; }
+
+
+            [Required]
+            [StringLength(50, MinimumLength = 1, ErrorMessage = "Tagline must be between 1 and 100 characters")]
+            [Display(Name = "Tagline")]
+            public string TagLine { get; set; }
+
+            public virtual ApplicationUser Person { get; set; }
+
+            public static implicit operator PersonalProfile(string v)
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+    
+# Adding controller and view
+
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Net;
+    using System.Web;
+    using System.Web.Mvc;
+    using ManagementPortal.Models;
+
+    namespace ManagementPortal.Controllers
+    {
+        public class PersonalProfilesController : ApplicationBaseController
+        {
+            private ApplicationDbContext db = new ApplicationDbContext();
+
+            // GET: PersonalProfiles
+            public ActionResult Index()
+            {
+                var personalProfiles = db.Profile.Include(p => p.Person);
+                return View(personalProfiles.ToList());
+            }
+
+            // GET: PersonalProfiles/Details/5
+            public ActionResult Details(string id)
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                PersonalProfile PersonalProfiles = db.Profile.Find(id);
+                if (PersonalProfiles == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(PersonalProfiles);
+            }
+
+            // GET: PersonalProfiles/Create
+            public ActionResult Create()
+            {
+                ViewBag.ProfileID = new SelectList(db.Users, "Id", "DisplayName");
+                return View();
+            }
+
+            // POST: PersonalProfiles/Create
+            // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+            // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public ActionResult Create([Bind(Include = "ProfileID,AboutMe,TagLine")] PersonalProfile PersonalProfiles)
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Profile.Add(PersonalProfiles);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+
+                ViewBag.ProfileID = new SelectList(db.Users, "Id", "DisplayName", PersonalProfiles.ProfileID);
+                return View(PersonalProfiles);
+            }
+
+            // GET: PersonalProfiles/Edit/5
+            public ActionResult Edit(string id, string ProfileID)
+            {
+                //var ProfileID = Request.QueryString["id"];
+                //return View();
+
+
+
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                PersonalProfile PersonalProfiles = db.Profile.Find(id);
+                if (PersonalProfiles == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.ProfileID = new SelectList(db.Users, "ProfileID", "DisplayName", PersonalProfiles.ProfileID);
+                return View(PersonalProfiles);
+            }
+
+            // POST: PersonalProfiles/Edit/5
+            // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+            // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public ActionResult Edit([Bind(Include = "ProfileID,AboutMe,TagLine")] PersonalProfile PersonalProfiles, IndexViewModel ProfileID)
+            {
+                //var ProfileID = Request["ProfileID"];
+                //var AboutMe = Request["About Me"];
+                //var TagLine = Request["TagLine"];
+
+                //return RedirectToAction(ProfileID);
+
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(PersonalProfiles).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                ViewBag.ProfileID = new SelectList(db.Users, "ProfileID", "DisplayName", PersonalProfiles.ProfileID);
+                return View(PersonalProfiles);
+            }
+
+            // GET: PersonalProfiles/Delete/5
+            public ActionResult Delete(string id)
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                PersonalProfile PersonalProfiles = db.Profile.Find(id);
+                if (PersonalProfiles == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(PersonalProfiles);
+            }
+
+            // POST: PersonalProfiles/Delete/5
+            [HttpPost, ActionName("Delete")]
+            [ValidateAntiForgeryToken]
+            public ActionResult DeleteConfirmed(string id)
+            {
+                PersonalProfile PersonalProfiles = db.Profile.Find(id);
+                db.Profile.Remove(PersonalProfiles);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    db.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+        }
+    }
+    
+    
+  # create view
+        @model ManagementPortal.Models.PersonalProfile
+
+    @{
+        ViewBag.Title = "Create";
+    }
+
+    <h2>Create</h2>
+
+    @using (Html.BeginForm()) 
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>PersonalProfile</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @*@Html.HiddenFor(m => m.ProfileID, new { id = "Person" })*@
+                @Html.LabelFor(model => model.ProfileID, "ProfileID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ProfileID", null, htmlAttributes: new { @class = "form-control" })
+                    @*@Html.HiddenFor(m => m.ProfileID, new { id = "Person" })*@
+                    @Html.ValidationMessageFor(model => model.ProfileID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AboutMe, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.AboutMe, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.AboutMe, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TagLine, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.TagLine, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TagLine, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+# connecting to the IdentityModels model from the PersonalProfile model in order to create a one to one relationship for the user id
+I added the public virtual PersonalProfile Profile { get; set; } line of code in order to create the relationship, and than added the public DbSet<PersonalProfile>Profile { get; set; } into the ApplicationDbContext to connect to that database so that each user would show up in the database.
+    
+    
+    public class ApplicationUser : IdentityUser
+        {
+
+            // PROFILE PICTURE
+            public byte[] ProfilePicture { get; set; }
+
+            //Set DisplayName with first name and last initial
+            public string DisplayName { get { return FirstName + " " + LastName.Substring(0, 1); } internal set { FirstName = value; LastName = value; } }
+            [Required(ErrorMessage = "Required Field. Please enter a First Name:"), Display(Name = "First Name")]
+            public string FirstName { get; set; }
+            [Required(ErrorMessage = "Required Field. Please enter a Last Name: "), Display(Name = "Last Name")]
+            public string LastName { get; set; }
+            [Required(ErrorMessage = "Required Field. Please enter a Work Type >> Leadman,Foreman,ExpMBA, or NewMBA: "), Display(Name = "Work Type")]
+            public WorkType WorkType { get; set; }
+            public string UserRole { get; set; }
+            [Display(Name = "Suspended")]
+            public bool Suspended { get; set; }
+
+            public string FullName { get { return (FirstName + " " + LastName); } }
+            public virtual List<Job> Jobs { get; set; }
+            public virtual List<Schedule> Schedules { get; set; }
+            public virtual PersonalProfile Profile { get; set; }
+            public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
+            {
+                // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
+                var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+                // Add custom user claims here
+                return userIdentity;
+            }
+            //add the user identity here for the aspnetuser table.
+
+        }
+        
+        
+        
+                                   
+        
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+        {
+            public ApplicationDbContext()
+                : base("DefaultConnection", throwIfV1Schema: false)
+            {
+            }
+
+            // Begin DbSets
+
+            public DbSet<CalendarEvent> CalendarEvents { get; set; }
+            public DbSet<CreateUserRequest> CreateUserRequests { get; set; }
+
+            public DbSet<ChatMessage> ChatMessages { get; set; }
+
+            public DbSet<CompanyNews> CompanyNews { get; set; }
+
+            public DbSet<Job> Jobs { get; set; }
+            public DbSet<JobSite> JobSites { get; set; }
+            public DbSet<ShiftTime> ShiftTime { get; set; }
+            public DbSet<JobOther> JobOthers { get; set; }
+
+            public DbSet<Schedule> Schedules { get; set; }
+            //public DbSet<EventModel> Events { get; set; }
+            public DbSet<PersonalProfile>Profile { get; set; }
+            //public virtual DbSet<CalEvent> CalendarEvents { get; set; }
+
+            // End DbSets       
+            
+            
